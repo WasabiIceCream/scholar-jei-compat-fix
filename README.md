@@ -12,7 +12,15 @@ only on its 1.21.1 branch; 1.2.5 is still the newest 26.1.2 release. `Remap.java
 change to the compiled class with ASM's `ClassRemapper` (the names change length, so a byte patch
 won't do); every other jar entry is copied unchanged.
 
-    ./patch.sh "../../fabric 26.1/mods/scholar-fabric-26.1.2-1.2.5.jar"   # in place, keeps .bak
+    ./patch.sh "../../fabric 26.1/mods/scholar-fabric-26.1.2-1.2.5.jar"         # drop (default), in place, keeps .bak
+    ./patch.sh "../../fabric 26.1/mods/scholar-fabric-26.1.2-1.2.5.jar" remap   # JEI 29.43-29.46 only
+
+**Since 2026-10-24 (JEI 29.47) the default mode drops the mixin instead.** JEI 29.47 rewrote its input handling
+and removed `GlobalInputHandler` and `IUserInputHandler`, so no remap can make the mixin apply. Upstream deleted
+the mixin on 2026-10-13 (commit `7a75d647`, Scholar 1.2.10, "Remove no longer needed JEI mixin and version
+restriction"; released for 1.21.1, 26.2 and 26.3, not 26.1.2). `drop_jei_mixin.py` makes the same change: it removes
+`jei.JeiKeyConflictContextMixin` from `scholar-common.mixins.json` and deletes the class. Always patch the stock
+jar from Modrinth, never an already-remapped one.
 
 Needs ASM 9.10.1 (`asm`, `asm-commons`, `asm-tree`) from PrismLauncher's library folder, or set
 `ASM_DIR`. Scholar is a both-sides mod, so the patched jar goes in `fabric 26.1/mods/`. Drop this
